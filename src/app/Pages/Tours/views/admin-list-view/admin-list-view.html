@@ -1,0 +1,100 @@
+<div class="mx-auto max-w-350">
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5">
+      <span class="text-xs font-semibold text-slate-500">Total de tours</span
+      ><strong class="mt-2 block font-display text-3xl text-blue-950">{{ tours().length }}</strong>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-5">
+      <span class="text-xs font-semibold text-slate-500">Publicados</span
+      ><strong class="mt-2 block font-display text-3xl text-blue-700">{{ activeCount() }}</strong>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-5">
+      <span class="text-xs font-semibold text-slate-500">Destacados</span
+      ><strong class="mt-2 block font-display text-3xl text-amber-600">{{
+        featuredCount()
+      }}</strong>
+    </div>
+  </div>
+  <section class="mt-6">
+    <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="font-display text-xl font-bold text-blue-950">Catálogo de experiencias</h2>
+        <p class="mt-1 text-sm text-slate-500">Crea, revisa y actualiza los tours del sitio.</p>
+      </div>
+      <app-button label="Nuevo tour" (btnClick)="openCreate()"
+        ><span aria-hidden="true">＋</span></app-button
+      >
+    </div>
+    <div
+      class="mb-4 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 sm:flex-row"
+    >
+      <app-search-input
+        class="flex-1"
+        placeholder="Buscar por nombre o destino"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+      /><app-select
+        class="sm:w-52"
+        placeholder="Todos los estados"
+        [options]="[
+          { label: 'Activos', value: 'active' },
+          { label: 'Inactivos', value: 'inactive' },
+        ]"
+        [ngModel]="status()"
+        (ngModelChange)="setStatus($event)"
+      />
+    </div>
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      emptyTitle="No hay tours para mostrar"
+      emptyMessage="Crea tu primera experiencia o cambia los filtros de búsqueda."
+      ><app-button label="Crear tour" variant="outline" (btnClick)="openCreate()" /><ng-template
+        #rowActions
+        let-row
+        ><div class="flex justify-end gap-1">
+          <button
+            type="button"
+            class="cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+            (click)="detailTour.set(rowTour(row))"
+          >
+            Ver</button
+          ><button
+            type="button"
+            class="cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-50"
+            (click)="openEdit(rowTour(row))"
+          >
+            Editar</button
+          ><button
+            type="button"
+            class="cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+            (click)="deleteTour.set(rowTour(row))"
+          >
+            Eliminar
+          </button>
+        </div></ng-template
+      ></app-data-table
+    >
+  </section>
+</div>
+@if (formOpen()) {
+  <app-tour-form-modal
+    [tour]="selectedTour()"
+    (cancelled)="formOpen.set(false)"
+    (saved)="onSaved()"
+  />
+}
+@if (detailTour(); as tour) {
+  <app-tour-detail-modal [tour]="tour" (closed)="detailTour.set(null)" (edit)="openEdit($event)" />
+}
+@if (deleteTour(); as tour) {
+  <app-confirm-modal
+    title="¿Eliminar este tour?"
+    [message]="'Se eliminará “' + tour.name + '”. Esta acción no se puede deshacer.'"
+    confirmText="Sí, eliminar"
+    [loading]="deleting()"
+    (cancelled)="deleteTour.set(null)"
+    (confirmed)="confirmDelete()"
+  />
+}

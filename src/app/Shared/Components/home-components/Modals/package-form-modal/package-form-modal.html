@@ -1,0 +1,139 @@
+<app-modal
+  [title]="item ? 'Editar paquete' : 'Crear un nuevo paquete'"
+  subtitle="Configura la ruta, las fechas y el precio por persona."
+  maxWidth="max-w-3xl"
+  [closeOnBackdrop]="false"
+  (onClose)="cancelled.emit()"
+>
+  <form (submit)="$event.preventDefault()" (ngSubmit)="save()">
+    @if (error()) {
+      <div
+        class="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
+        role="alert"
+      >
+        {{ error() }}
+      </div>
+    }
+    <div class="grid gap-4 sm:grid-cols-2">
+      <app-input-field
+        class="sm:col-span-2"
+        label="Nombre del paquete"
+        [required]="true"
+        placeholder="Ej. Esencias andinas"
+        [ngModel]="form.name"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="form.name = $event === null ? '' : $event.toString()"
+      /><app-input-field
+        label="Duración (días)"
+        type="number"
+        [min]="1"
+        [ngModel]="form.days"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setNumber('days', $event)"
+      /><app-input-field
+        label="Precio por persona (USD)"
+        type="number"
+        [min]="1"
+        [ngModel]="form.pricePerPerson"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setNumber('pricePerPerson', $event)"
+      /><app-input-field
+        label="Fecha de salida"
+        type="date"
+        [ngModel]="form.startDate"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="form.startDate = $event === null ? '' : $event.toString()"
+      /><app-input-field
+        label="Fecha de regreso"
+        type="date"
+        [ngModel]="form.endDate"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="form.endDate = $event === null ? '' : $event.toString()"
+      />
+      <div class="sm:col-span-2">
+        <label for="package-short" class="mb-1.5 block text-sm font-semibold text-slate-700"
+          >Descripción corta</label
+        ><textarea
+          id="package-short"
+          name="shortDescription"
+          [(ngModel)]="form.shortDescription"
+          class="form-textarea min-h-20"
+        ></textarea>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="package-description" class="mb-1.5 block text-sm font-semibold text-slate-700"
+          >Descripción completa</label
+        ><textarea
+          id="package-description"
+          name="description"
+          [(ngModel)]="form.description"
+          class="form-textarea"
+        ></textarea>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="package-destinations" class="mb-1.5 block text-sm font-semibold text-slate-700"
+          >Destinos incluidos</label
+        ><textarea
+          id="package-destinations"
+          name="destinations"
+          [(ngModel)]="destinationsText"
+          class="form-textarea min-h-24"
+          placeholder="Un destino por línea"
+        ></textarea>
+        <p class="mt-1 text-xs text-slate-400">Se mostrarán en el orden en que los escribas.</p>
+      </div>
+    </div>
+    <section class="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+      <button
+        type="button"
+        class="flex w-full cursor-pointer items-center justify-between bg-slate-50 px-4 py-3 text-left text-sm font-bold text-blue-950"
+        (click)="detailsOpen = !detailsOpen"
+      >
+        <span>Imagen y publicación</span><span>{{ detailsOpen ? '−' : '+' }}</span>
+      </button>
+      @if (detailsOpen) {
+        <div class="grid gap-5 p-4 sm:grid-cols-2">
+          <app-image-input
+            label="Imagen de portada"
+            [required]="true"
+            [preview]="form.image"
+            (imageChange)="form.image = $event"
+          />
+          <div>
+            <app-select
+              label="Estado"
+              [options]="[
+                { label: 'Activo y visible', value: 'active' },
+                { label: 'Inactivo', value: 'inactive' },
+              ]"
+              [ngModel]="form.status"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="setStatus($event)"
+            /><label
+              class="mt-4 flex cursor-pointer items-center gap-3 rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-900"
+              ><input
+                type="checkbox"
+                name="featured"
+                [(ngModel)]="form.featured"
+                class="size-4 accent-blue-800"
+              />Mostrar como destacado</label
+            >
+          </div>
+        </div>
+      }
+    </section>
+    <footer
+      class="sticky bottom-0 -mx-5 mt-6 flex justify-end gap-3 border-t border-slate-100 bg-white px-5 py-4 sm:-mx-6 sm:px-6"
+    >
+      <app-button
+        variant="outline"
+        label="Cancelar"
+        [disabled]="saving()"
+        (btnClick)="cancelled.emit()"
+      /><app-save-button
+        [loading]="saving()"
+        [label]="item ? 'Guardar cambios' : 'Crear paquete'"
+      />
+    </footer>
+  </form>
+</app-modal>

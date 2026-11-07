@@ -1,0 +1,89 @@
+<app-modal maxWidth="max-w-3xl" [showHeader]="false" bodyClass="p-0" (onClose)="closed.emit()">
+  <div class="relative h-60 bg-blue-950 sm:h-72">
+    <img [src]="tour.images[0]" [alt]="tour.name" class="size-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-t from-blue-950/90 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+      <div class="flex flex-wrap gap-2">
+        <app-status-badge [status]="tour.status" />
+        @if (tour.featured) {
+          <app-status-badge status="featured" />
+        }
+      </div>
+      <h2 class="mt-3 font-display text-3xl font-bold">{{ tour.name }}</h2>
+      <p class="mt-1 text-sm text-white/75">⌖ {{ tour.destination }}</p>
+    </div>
+  </div>
+  <div class="p-5 sm:p-7">
+    <div class="grid grid-cols-3 gap-3 rounded-2xl bg-slate-50 p-4 text-center">
+      <div>
+        <span class="block text-xs text-slate-400">Duración</span
+        ><strong class="text-sm text-slate-800">{{ tour.durationDays }} días</strong>
+      </div>
+      <div>
+        <span class="block text-xs text-slate-400">Categoría</span
+        ><strong class="text-sm text-slate-800">{{ tour.category }}</strong>
+      </div>
+      <div>
+        <span class="block text-xs text-slate-400">Precio</span
+        ><strong class="text-sm text-slate-800">{{ price(tour.price) }}</strong>
+      </div>
+    </div>
+    <section class="mt-6">
+      <h3 class="text-sm font-bold text-blue-950">Descripción</h3>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600">{{ tour.description }}</p>
+    </section>
+    <section class="mt-6">
+      <h3 class="text-sm font-bold text-blue-950">Itinerario</h3>
+      <div class="mt-3 space-y-3">
+        @for (day of tour.itinerary; track day.day) {
+          <div class="flex gap-3 rounded-xl border border-slate-100 p-3">
+            <span
+              class="grid size-8 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-bold text-blue-800"
+              >{{ day.day }}</span
+            >
+            <div>
+              <h4 class="text-sm font-bold text-slate-800">
+                {{ day.title }}
+                @if (day.dateLabel) {
+                  <span class="ml-2 text-[10px] font-semibold text-blue-600">{{
+                    day.dateLabel
+                  }}</span>
+                }
+              </h4>
+              <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ day.description }}</p>
+              @if (day.lodging) {
+                <p class="mt-1.5 text-[10px] font-semibold text-amber-700">
+                  🛏 Hospedaje: {{ day.lodging }}
+                </p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+    <section class="mt-6 grid gap-5 sm:grid-cols-2">
+      <div>
+        <h3 class="text-sm font-bold text-blue-950">Incluye</h3>
+        <ul class="mt-2 space-y-1.5">
+          @for (item of tour.includes; track item) {
+            <li class="text-xs text-slate-600">✓ {{ item }}</li>
+          }
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-blue-950">No incluye</h3>
+        <ul class="mt-2 space-y-1.5">
+          @for (item of tour.excludes; track item) {
+            <li class="text-xs text-slate-600">× {{ item }}</li>
+          }
+        </ul>
+      </div>
+    </section>
+    <footer class="mt-7 flex justify-end gap-3 border-t border-slate-100 pt-5">
+      <app-button variant="outline" label="Cerrar" (btnClick)="closed.emit()" /><app-button
+        label="Editar tour"
+        (btnClick)="edit.emit(tour)"
+      />
+    </footer>
+  </div>
+</app-modal>

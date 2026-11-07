@@ -1,0 +1,7 @@
+:host {
+  display: inline-flex;
+  max-width: 100%;
+}
+:host(.w-full) {
+  width: 100%;
+}

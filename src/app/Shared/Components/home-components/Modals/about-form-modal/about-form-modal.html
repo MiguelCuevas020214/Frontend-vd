@@ -1,0 +1,140 @@
+<app-modal
+  title="Editar sección Nosotros"
+  subtitle="Actualiza la historia, los valores, el equipo y el contacto."
+  maxWidth="max-w-4xl"
+  [closeOnBackdrop]="false"
+  (onClose)="cancelled.emit()"
+>
+  <form (submit)="$event.preventDefault()" (ngSubmit)="save()">
+    @if (error()) {
+      <div class="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+        {{ error() }}
+      </div>
+    }
+    <div class="grid gap-5 lg:grid-cols-2">
+      <app-image-input
+        label="Imagen principal"
+        [preview]="form.image"
+        (imageChange)="form.image = $event"
+      />
+      <div class="space-y-4">
+        <app-input-field
+          label="Correo de contacto"
+          type="email"
+          [ngModel]="form.email"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="form.email = $event === null ? '' : $event.toString()"
+        /><app-input-field
+          label="Teléfono"
+          [ngModel]="form.phone"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="form.phone = $event === null ? '' : $event.toString()"
+        /><app-input-field
+          label="Dirección"
+          [ngModel]="form.address"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="form.address = $event === null ? '' : $event.toString()"
+        />
+      </div>
+    </div>
+    <div class="mt-5 space-y-4">
+      <app-input-field
+        label="Título principal"
+        [ngModel]="form.title"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="form.title = $event === null ? '' : $event.toString()"
+      />
+      <div>
+        <label for="about-intro" class="mb-1.5 block text-sm font-semibold text-slate-700"
+          >Introducción</label
+        ><textarea
+          id="about-intro"
+          name="intro"
+          [(ngModel)]="form.intro"
+          class="form-textarea"
+        ></textarea>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="about-mission" class="mb-1.5 block text-sm font-semibold text-slate-700"
+            >Misión</label
+          ><textarea
+            id="about-mission"
+            name="mission"
+            [(ngModel)]="form.mission"
+            class="form-textarea"
+          ></textarea>
+        </div>
+        <div>
+          <label for="about-vision" class="mb-1.5 block text-sm font-semibold text-slate-700"
+            >Visión</label
+          ><textarea
+            id="about-vision"
+            name="vision"
+            [(ngModel)]="form.vision"
+            class="form-textarea"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <section class="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+      <button
+        type="button"
+        class="flex w-full cursor-pointer items-center justify-between bg-slate-50 px-4 py-3 text-sm font-bold text-blue-950"
+        (click)="teamOpen = !teamOpen"
+      >
+        <span>Equipo ({{ form.team.length }} integrantes)</span
+        ><span>{{ teamOpen ? '−' : '+' }}</span>
+      </button>
+      @if (teamOpen) {
+        <div class="space-y-4 p-4">
+          @for (member of form.team; track $index; let index = $index) {
+            <div class="rounded-xl border border-slate-200 p-4">
+              <div class="mb-3 flex justify-between">
+                <h3 class="text-sm font-bold text-slate-700">Integrante {{ index + 1 }}</h3>
+                <button
+                  type="button"
+                  class="cursor-pointer text-xs font-semibold text-rose-600"
+                  (click)="removeMember(index)"
+                >
+                  Quitar
+                </button>
+              </div>
+              <div class="grid gap-4 sm:grid-cols-[140px_1fr]">
+                <app-image-input
+                  label="Fotografía"
+                  [preview]="member.image"
+                  (imageChange)="member.image = $event"
+                />
+                <div class="space-y-3">
+                  <app-input-field
+                    label="Nombre"
+                    [ngModel]="member.name"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="member.name = $event === null ? '' : $event.toString()"
+                  /><app-input-field
+                    label="Cargo"
+                    [ngModel]="member.role"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="member.role = $event === null ? '' : $event.toString()"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+          <app-add-more-btn label="Agregar integrante" (addClick)="addMember()" />
+        </div>
+      }
+    </section>
+    <footer
+      class="sticky bottom-0 -mx-5 mt-6 flex justify-end gap-3 border-t border-slate-100 bg-white px-5 py-4 sm:-mx-6 sm:px-6"
+    >
+      <app-button
+        variant="outline"
+        label="Cancelar"
+        [disabled]="saving()"
+        (btnClick)="cancelled.emit()"
+      /><app-save-button [loading]="saving()" label="Guardar contenido" />
+    </footer>
+  </form>
+</app-modal>

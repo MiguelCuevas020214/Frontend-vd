@@ -1,0 +1,68 @@
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-sky-700 py-14 text-white sm:py-20"
+>
+  <div class="absolute -right-20 -top-24 size-80 rounded-full border-[50px] border-white/5"></div>
+  <div class="site-container relative">
+    <p class="text-xs font-bold uppercase tracking-[.22em] text-amber-300">Escápate unos días</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-bold text-balance sm:text-5xl">
+      Escapadas Express
+    </h1>
+    <p class="mt-4 max-w-2xl text-sm leading-relaxed text-blue-100/80 sm:text-base">
+      Tours de hasta <strong class="text-white">4 días y 3 noches</strong>: perfectos para salir de
+      la rutina sin pedir tantos días. Mismo estilo Viaje Directo: itinerario fijo, todo incluido y
+      sin sorpresas.
+    </p>
+  </div>
+</section>
+
+<section class="site-container py-8 sm:py-12">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <p class="text-sm text-slate-600">
+      <strong class="text-blue-950">{{ expressTours().length }}</strong>
+      {{ expressTours().length === 1 ? 'escapada disponible' : 'escapadas disponibles' }}
+    </p>
+    <a routerLink="/tours" class="text-sm font-semibold text-blue-700 hover:underline">
+      ¿Buscas un viaje largo? Ver Tours →
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="skeleton h-105 rounded-3xl"></div>
+      }
+    </div>
+  } @else if (expressTours().length) {
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (tour of expressTours(); track tour.id) {
+        <app-dynamic-card
+          [image]="tour.images[0]"
+          [imageAlt]="tour.name"
+          [title]="tour.name"
+          [subtitle]="tour.destination"
+          [description]="tour.shortDescription"
+          [meta]="tour.durationDays + ' días · ' + nights(tour)"
+          [price]="price(tour.price)"
+          [badges]="['Express']"
+          [link]="'/tours/' + tour.id"
+        />
+      }
+    </div>
+  } @else {
+    <div class="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-16 text-center">
+      <span class="text-4xl" aria-hidden="true">⚡</span>
+      <h2 class="mt-3 font-display text-2xl font-bold text-blue-950">
+        Muy pronto tendremos escapadas Express
+      </h2>
+      <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-600">
+        Estamos preparando salidas cortas. Mientras tanto, descubre nuestros tours de varios días.
+      </p>
+      <app-button
+        label="Ver todos los tours"
+        variant="outline"
+        customClass="mt-5"
+        (btnClick)="goTours()"
+      />
+    </div>
+  }
+</section>

@@ -1,0 +1,15 @@
+<app-button
+  type="submit"
+  size="lg"
+  [label]="loading ? 'Ingresando…' : label"
+  [disabled]="disabled || loading"
+  [fullWidth]="true"
+  (btnClick)="authClick.emit($event)"
+>
+  @if (loading) {
+    <span
+      class="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+      aria-hidden="true"
+    ></span>
+  }
+</app-button>

@@ -1,0 +1,39 @@
+<div class="w-full">
+  @if (label) {
+    <label [for]="inputId" class="mb-1.5 block text-sm font-semibold text-slate-700">
+      {{ label }}
+      @if (required) {
+        <span class="text-rose-500" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+  <input
+    [id]="inputId"
+    [type]="type"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [required]="required"
+    [attr.autocomplete]="autocomplete"
+    [attr.min]="min"
+    [attr.max]="max"
+    [attr.step]="step"
+    [ngModel]="ngModel"
+    [ngModelOptions]="{ standalone: true }"
+    (ngModelChange)="update($event)"
+    [attr.aria-invalid]="!!error"
+    [attr.aria-describedby]="error || hint ? inputId + '-help' : null"
+    class="min-h-11 w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 disabled:cursor-not-allowed disabled:bg-slate-100"
+    [class]="
+      error
+        ? 'border-rose-400 bg-rose-50 text-rose-950 ring-2 ring-rose-200 focus:border-rose-500'
+        : 'border-slate-200 hover:border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100'
+    "
+  />
+  @if (error) {
+    <p [id]="inputId + '-help'" class="mt-1.5 text-xs font-medium text-rose-600" role="alert">
+      {{ error }}
+    </p>
+  } @else if (hint) {
+    <p [id]="inputId + '-help'" class="mt-1.5 text-xs text-slate-500">{{ hint }}</p>
+  }
+</div>

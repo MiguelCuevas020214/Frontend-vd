@@ -1,0 +1,90 @@
+<app-modal
+  [title]="departure ? 'Editar salida' : 'Programar una salida'"
+  subtitle="Asocia un tour o paquete y define su disponibilidad."
+  maxWidth="max-w-xl"
+  [closeOnBackdrop]="false"
+  (onClose)="cancelled.emit()"
+>
+  <form class="space-y-4" (submit)="$event.preventDefault()" (ngSubmit)="save()">
+    @if (error()) {
+      <div
+        class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
+        role="alert"
+      >
+        {{ error() }}
+      </div>
+    }
+    <app-select
+      label="Tipo de experiencia"
+      [options]="[
+        { label: 'Tour', value: 'tour' },
+        { label: 'Paquete', value: 'package' },
+      ]"
+      [ngModel]="form.productType"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="setProductType($event)"
+    /><app-select
+      label="Tour o paquete"
+      placeholder="Selecciona una experiencia"
+      [options]="productOptions()"
+      [ngModel]="form.productId"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="setProduct($event)"
+      [required]="true"
+    /><app-input-field
+      label="Fecha de salida"
+      type="date"
+      [required]="true"
+      [ngModel]="form.date"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="form.date = $event === null ? '' : $event.toString()"
+    />
+    <div class="grid grid-cols-2 gap-4">
+      <app-input-field
+        label="Cupos totales"
+        type="number"
+        [min]="1"
+        [ngModel]="form.totalSlots"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setNumber('totalSlots', $event)"
+      /><app-input-field
+        label="Cupos disponibles"
+        type="number"
+        [min]="0"
+        [ngModel]="form.availableSlots"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setNumber('availableSlots', $event)"
+      />
+    </div>
+    <app-input-field
+      label="Precio de esta salida (USD)"
+      type="number"
+      [min]="1"
+      [ngModel]="form.price"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="setNumber('price', $event)"
+    /><app-select
+      label="Estado"
+      [options]="[
+        { label: 'Activa y visible', value: 'active' },
+        { label: 'Inactiva', value: 'inactive' },
+      ]"
+      [ngModel]="form.status"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="setStatus($event)"
+    />
+    <footer
+      class="sticky bottom-0 -mx-5 flex justify-end gap-3 border-t border-slate-100 bg-white px-5 pt-4 sm:-mx-6 sm:px-6"
+    >
+      <app-button
+        variant="outline"
+        label="Cancelar"
+        [disabled]="saving()"
+        (btnClick)="cancelled.emit()"
+      /><app-save-button
+        [loading]="saving()"
+        [label]="departure ? 'Guardar cambios' : 'Programar salida'"
+      />
+    </footer>
+  </form>
+</app-modal>

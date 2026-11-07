@@ -1,0 +1,364 @@
+@if (loading()) {
+  <section class="site-container py-6">
+    <div class="skeleton h-[70vh] min-h-130 rounded-3xl"></div>
+    <div class="mt-20 grid gap-6 md:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="skeleton h-96 rounded-3xl"></div>
+      }
+    </div>
+  </section>
+} @else if (loadError() || !content()) {
+  <section class="site-container grid min-h-[65vh] place-items-center py-16 text-center">
+    <div>
+      <span class="text-5xl" aria-hidden="true">⌁</span>
+      <h1 class="mt-4 font-display text-3xl font-bold text-blue-950">
+        La conexión se tomó un desvío
+      </h1>
+      <p class="mt-2 text-slate-600">
+        No pudimos cargar el contenido. Revisa tu conexión e inténtalo otra vez.
+      </p>
+      <app-button label="Reintentar" customClass="mt-6" (btnClick)="load()" />
+    </div>
+  </section>
+} @else {
+  <section class="site-container py-4 sm:py-6">
+    <div
+      class="relative isolate min-h-[calc(100svh_-_7rem)] overflow-hidden rounded-3xl bg-gradient-to-br from-blue-950 via-blue-900 to-sky-700 sm:min-h-150 lg:min-h-[calc(100svh_-_8rem)]"
+    >
+      @for (image of heroImages(); track image; let i = $index) {
+        <img
+          [src]="image"
+          [alt]="'Portada ' + (i + 1) + ' de Viaje Directo'"
+          class="absolute inset-0 -z-20 size-full object-cover transition-opacity duration-1000"
+          [class.opacity-100]="heroIndex() === i"
+          [class.opacity-0]="heroIndex() !== i"
+          [attr.fetchpriority]="i === 0 ? 'high' : null"
+          [attr.loading]="i === 0 ? null : 'lazy'"
+        />
+      }
+      <div
+        class="absolute inset-0 -z-10 bg-gradient-to-r from-blue-950/90 via-blue-900/55 to-sky-500/15"
+      ></div>
+      <div
+        class="absolute inset-0 -z-10 bg-gradient-to-t from-blue-950/60 via-transparent to-transparent"
+      ></div>
+      <div class="flex min-h-[inherit] flex-col justify-between p-6 sm:p-10 lg:p-14 xl:p-16">
+        <div class="flex items-center justify-between gap-4 text-white/80">
+          <span
+            class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[11px] font-semibold backdrop-blur"
+            ><span class="size-1.5 rounded-full bg-amber-300"></span>Viajes que dejan
+            historias</span
+          >
+          <div class="flex items-center gap-2">
+            @for (image of heroImages(); track image; let i = $index) {
+              <button
+                type="button"
+                class="h-2.5 cursor-pointer rounded-full transition-all duration-300"
+                [class]="
+                  heroIndex() === i ? 'w-8 bg-amber-300' : 'w-2.5 bg-white/50 hover:bg-white'
+                "
+                (click)="goToSlide(i)"
+                [attr.aria-label]="'Ver imagen de portada ' + (i + 1)"
+                [attr.aria-current]="heroIndex() === i ? 'true' : null"
+              ></button>
+            }
+          </div>
+        </div>
+        <div class="max-w-3xl py-14 text-white">
+          <p class="mb-4 text-xs font-bold uppercase tracking-[.22em] text-amber-300">
+            Tu próxima historia empieza aquí
+          </p>
+          <h1
+            class="font-display text-4xl font-semibold leading-[1.08] tracking-tight text-balance sm:text-5xl md:text-6xl xl:text-7xl"
+          >
+            {{ content()!.home.heroTitle }}
+          </h1>
+          <p class="mt-5 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base md:text-lg">
+            {{ content()!.home.heroSubtitle }}
+          </p>
+          <div class="mt-7 flex flex-col gap-3 min-[420px]:flex-row">
+            <app-button
+              variant="secondary"
+              size="lg"
+              [label]="content()!.home.primaryCta"
+              (btnClick)="navigate('/tours')"
+              ><span aria-hidden="true">⌖</span></app-button
+            ><app-button
+              size="lg"
+              variant="outline"
+              customClass="border-white/40 bg-white/10 text-white hover:border-white hover:bg-white hover:text-blue-950"
+              [label]="content()!.home.secondaryCta"
+              (btnClick)="navigate('/calendario')"
+            />
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-3 gap-3 border-t border-white/20 pt-5 text-white sm:max-w-xl sm:gap-8"
+        >
+          <div>
+            <strong class="block font-display text-2xl sm:text-3xl">12</strong
+            ><span class="text-[10px] text-white/65 sm:text-xs">años creando rutas</span>
+          </div>
+          <div>
+            <strong class="block font-display text-2xl sm:text-3xl"
+              >4.9<span class="text-amber-300">★</span></strong
+            ><span class="text-[10px] text-white/65 sm:text-xs">de nuestros viajeros</span>
+          </div>
+          <div>
+            <strong class="block font-display text-2xl sm:text-3xl">18</strong
+            ><span class="text-[10px] text-white/65 sm:text-xs">destinos únicos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-container pb-2 pt-2 sm:pb-4">
+    <div
+      class="grid gap-3 rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4 lg:p-5"
+    >
+      <div class="flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4">
+        <span
+          class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-950 text-amber-300"
+          aria-hidden="true"
+          >✓</span
+        >
+        <div>
+          <h3 class="text-sm font-bold text-blue-950">Itinerario fijo</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            La ruta que ves es la que recorres.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4">
+        <span
+          class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-950 text-amber-300"
+          aria-hidden="true"
+          >🛏</span
+        >
+        <div>
+          <h3 class="text-sm font-bold text-blue-950">Todo pactado</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            Hoteles y lugares confirmados por convenio.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4">
+        <span
+          class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-950 text-amber-300"
+          aria-hidden="true"
+          >$</span
+        >
+        <div>
+          <h3 class="text-sm font-bold text-blue-950">Precio todo incluido</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            Lo que dice el itinerario, ya va dentro.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4">
+        <span
+          class="grid size-10 shrink-0 place-items-center rounded-full bg-blue-950 text-amber-300"
+          aria-hidden="true"
+          >🛡</span
+        >
+        <div>
+          <h3 class="text-sm font-bold text-blue-950">Sin sorpresas</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            Sin costos ocultos ni cambios de último momento.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-container py-16 sm:py-20 lg:py-24">
+    <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[.2em] text-blue-700">
+          Experiencias seleccionadas
+        </p>
+        <h2 class="mt-2 font-display text-3xl font-bold text-blue-950 sm:text-4xl">
+          Tours que enamoran
+        </h2>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+          Lugares extraordinarios, guías que conocen su tierra y grupos pequeños.
+        </p>
+      </div>
+      <app-button variant="outline" label="Ver todos los tours" (btnClick)="navigate('/tours')" />
+    </div>
+    @if (featuredTours().length) {
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        @for (tour of featuredTours(); track tour.id) {
+          <app-dynamic-card
+            [image]="tour.images[0]"
+            [imageAlt]="tour.name"
+            [title]="tour.name"
+            [subtitle]="tour.destination"
+            [description]="tour.shortDescription"
+            [meta]="tour.durationDays + ' días · ' + tour.category"
+            [price]="price(tour.price)"
+            [badges]="tour.featured ? ['Favorito'] : []"
+            [link]="'/tours/' + tour.id"
+          />
+        }
+      </div>
+    } @else {
+      <div class="rounded-3xl border border-dashed border-slate-300 py-16 text-center">
+        <p class="font-display text-xl text-slate-700">
+          Muy pronto tendrás nuevos tours destacados.
+        </p>
+        <app-button
+          label="Explorar el catálogo"
+          variant="outline"
+          customClass="mt-4"
+          (btnClick)="navigate('/tours')"
+        />
+      </div>
+    }
+  </section>
+
+  <section class="bg-[#eaf2fe] py-16 sm:py-20 lg:py-24">
+    <div class="site-container">
+      <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[.2em] text-blue-700">
+            Escápate unos días
+          </p>
+          <h2 class="mt-2 font-display text-3xl font-bold text-blue-950 sm:text-4xl">
+            Escapadas Express
+          </h2>
+          <p class="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+            Tours de hasta 4 días y 3 noches, con el mismo itinerario fijo y todo incluido.
+          </p>
+        </div>
+        <app-button
+          variant="outline"
+          label="Ver todas las Express"
+          (btnClick)="navigate('/express')"
+        />
+      </div>
+      @if (expressTours().length) {
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          @for (tour of expressTours(); track tour.id) {
+            <app-dynamic-card
+              [image]="tour.images[0]"
+              [imageAlt]="tour.name"
+              [title]="tour.name"
+              [subtitle]="tour.destination"
+              [description]="tour.shortDescription"
+              [meta]="tour.durationDays + ' días · ' + tour.durationNights + ' noches'"
+              [price]="price(tour.price)"
+              [badges]="['Express']"
+              [link]="'/tours/' + tour.id"
+            />
+          }
+        </div>
+      } @else {
+        <div
+          class="rounded-3xl border border-dashed border-blue-200 bg-white px-5 py-12 text-center"
+        >
+          <p class="font-display text-lg font-bold text-blue-950">
+            Muy pronto habrá escapadas Express
+          </p>
+          <p class="mt-1 text-sm text-slate-500">
+            Mientras tanto, descubre nuestros tours de varios días.
+          </p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section
+    class="site-container grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:py-24"
+  >
+    <div class="relative">
+      <div class="aspect-[4/3] overflow-hidden rounded-3xl">
+        <img
+          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=85"
+          alt="Grupo de viajeros compartiendo una experiencia"
+          class="size-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div
+        class="absolute -bottom-5 -right-2 max-w-48 rounded-2xl bg-amber-300 p-5 text-blue-950 shadow-xl sm:right-8"
+      >
+        <strong class="block font-display text-3xl">96%</strong
+        ><span class="text-xs leading-snug">vuelve a viajar con nosotros</span>
+      </div>
+    </div>
+    <div class="pt-4 lg:pt-0">
+      <p class="text-xs font-bold uppercase tracking-[.2em] text-blue-700">
+        La diferencia es humana
+      </p>
+      <h2 class="mt-3 font-display text-3xl font-bold leading-tight text-blue-950 sm:text-4xl">
+        {{ content()!.home.aboutTitle }}
+      </h2>
+      <p class="mt-5 text-base leading-relaxed text-slate-600">{{ content()!.home.aboutText }}</p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl bg-blue-50 p-4">
+          <span class="text-xl text-blue-800" aria-hidden="true">♧</span>
+          <h3 class="mt-2 text-sm font-bold text-blue-950">Impacto positivo</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-600">
+            Trabajamos con proveedores y comunidades locales.
+          </p>
+        </div>
+        <div class="rounded-2xl bg-amber-50 p-4">
+          <span class="text-xl text-amber-700" aria-hidden="true">♡</span>
+          <h3 class="mt-2 text-sm font-bold text-blue-950">Siempre cerca</h3>
+          <p class="mt-1 text-xs leading-relaxed text-slate-600">
+            Acompañamiento real antes y durante tu viaje.
+          </p>
+        </div>
+      </div>
+      <app-button
+        variant="ghost"
+        label="Conoce nuestra historia →"
+        customClass="mt-5 px-0"
+        (btnClick)="navigate('/nosotros')"
+      />
+    </div>
+  </section>
+
+  <section
+    class="bg-gradient-to-br from-blue-950 via-blue-900 to-sky-700 py-16 text-white sm:py-20"
+  >
+    <div class="site-container">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="text-3xl text-amber-300" aria-hidden="true">“</span>
+        <blockquote class="mt-2 font-display text-2xl font-semibold leading-snug sm:text-3xl">
+          No fue solo un viaje bonito. Sentimos que alguien había pensado en nosotros en cada
+          pequeño detalle.
+        </blockquote>
+        <div class="mt-6 flex items-center justify-center gap-3">
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+            alt="Retrato de Valeria, viajera"
+            class="size-11 rounded-full object-cover"
+          />
+          <div class="text-left">
+            <p class="text-sm font-bold">Valeria M.</p>
+            <p class="text-xs text-blue-100/60">Viajó a Cusco · Mayo 2026</p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mt-12 flex flex-col items-center justify-between gap-5 rounded-3xl border border-white/10 bg-white/5 p-6 text-center sm:p-8 lg:flex-row lg:text-left"
+      >
+        <div>
+          <h2 class="font-display text-2xl font-bold">¿Empezamos a imaginar tu próximo viaje?</h2>
+          <p class="mt-1 text-sm text-blue-100/65">
+            Cuéntanos qué te mueve y lo convertiremos en una ruta.
+          </p>
+        </div>
+        <app-button
+          variant="secondary"
+          size="lg"
+          label="Encontrar mi viaje"
+          (btnClick)="navigate('/tours')"
+        />
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,16 @@
+<div
+  class="grid gap-2 border-b border-slate-100 py-4 last:border-0 lg:grid-cols-[180px_minmax(0,1fr)] lg:gap-6"
+>
+  <div>
+    <span class="text-sm font-semibold text-slate-700"
+      >{{ label }}
+      @if (required) {
+        <span class="text-rose-500">*</span>
+      }
+    </span>
+    @if (hint) {
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ hint }}</p>
+    }
+  </div>
+  <div class="min-w-0"><ng-content /></div>
+</div>

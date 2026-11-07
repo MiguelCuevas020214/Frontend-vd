@@ -1,0 +1,264 @@
+@if (loading()) {
+  <div class="site-container py-6">
+    <div class="skeleton h-[60vh] rounded-3xl"></div>
+    <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_350px]">
+      <div class="skeleton h-96 rounded-3xl"></div>
+      <div class="skeleton h-80 rounded-3xl"></div>
+    </div>
+  </div>
+} @else if (!tour()) {
+  <section class="site-container grid min-h-[65vh] place-items-center text-center">
+    <div>
+      <span class="text-5xl">⌖</span>
+      <h1 class="mt-4 font-display text-3xl font-bold text-blue-950">Este tour cambió de ruta</h1>
+      <p class="mt-2 text-slate-600">No pudimos encontrar la experiencia que buscas.</p>
+      <a
+        routerLink="/tours"
+        class="mt-6 inline-flex rounded-full bg-blue-900 px-6 py-3 text-sm font-bold text-white"
+        >Volver a los tours</a
+      >
+    </div>
+  </section>
+} @else {
+  <section class="site-container py-5 sm:py-8">
+    <nav class="mb-5 flex items-center gap-2 text-xs text-slate-500" aria-label="Migas de pan">
+      <a routerLink="/tours" class="hover:text-blue-800">Tours</a><span>/</span
+      ><span class="truncate text-slate-700">{{ tour()!.name }}</span>
+    </nav>
+    <div class="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
+      <div class="relative min-h-80 overflow-hidden rounded-3xl bg-slate-100 sm:min-h-120">
+        <img
+          [src]="tour()!.images[selectedImage()] || tour()!.images[0]"
+          [alt]="tour()!.name"
+          class="absolute inset-0 size-full object-cover"
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent"
+        ></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-8">
+          <app-status-badge status="featured" [label]="tour()!.category" />
+          @if (isExpress()) {
+            <app-status-badge status="pending" label="⚡ Tour Express" />
+          }
+          <h1 class="mt-3 max-w-2xl font-display text-3xl font-bold text-balance sm:text-5xl">
+            {{ tour()!.name }}
+          </h1>
+          <p class="mt-2 text-sm text-white/80">⌖ {{ tour()!.destination }}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3 lg:grid-cols-1">
+        @for (image of tour()!.images.slice(0, 3); track $index) {
+          <button
+            type="button"
+            class="relative min-h-24 cursor-pointer overflow-hidden rounded-2xl border-2 bg-slate-100 lg:min-h-0"
+            [class.border-amber-300]="selectedImage() === $index"
+            [class.border-transparent]="selectedImage() !== $index"
+            (click)="selectedImage.set($index)"
+            [attr.aria-label]="'Ver fotografía ' + ($index + 1)"
+          >
+            <img
+              [src]="image"
+              [alt]="'Vista ' + ($index + 1) + ' de ' + tour()!.name"
+              class="absolute inset-0 size-full object-cover transition hover:scale-105"
+            />
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+  <section class="site-container grid gap-10 py-8 lg:grid-cols-[minmax(0,1fr)_350px] lg:py-12">
+    <div class="min-w-0">
+      <div class="grid grid-cols-3 gap-3 rounded-2xl bg-[#eaf2fe] p-4 text-center sm:p-5">
+        <div>
+          <span class="block text-xs text-slate-500">Duración</span
+          ><strong class="mt-1 block text-sm text-blue-950"
+            >{{ tour()!.durationDays }} días / {{ tour()!.durationNights }} noches</strong
+          >
+        </div>
+        <div>
+          <span class="block text-xs text-slate-500">Grupo</span
+          ><strong class="mt-1 block text-sm text-blue-950">Máx. 16 viajeros</strong>
+        </div>
+        <div>
+          <span class="block text-xs text-slate-500">Idioma</span
+          ><strong class="mt-1 block text-sm text-blue-950">Español</strong>
+        </div>
+      </div>
+      <article class="py-8">
+        <h2 class="font-display text-2xl font-bold text-blue-950">La experiencia</h2>
+        <p class="mt-3 text-base leading-8 text-slate-600">{{ tour()!.description }}</p>
+      </article>
+      @if (tour()!.pickupNote) {
+        <p
+          class="flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm font-semibold leading-relaxed text-amber-900"
+        >
+          <span class="text-lg leading-none" aria-hidden="true">🚐</span>{{ tour()!.pickupNote }}
+        </p>
+      }
+      <section class="border-t border-slate-200 py-8 sm:py-10">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[.18em] text-blue-700">
+              Tu ruta, día a día
+            </p>
+            <h2 class="mt-2 font-display text-2xl font-bold text-blue-950 sm:text-3xl">
+              {{ tour()!.itinerary.length }} días de aventura
+            </h2>
+          </div>
+          <p class="text-xs text-slate-400">Consulta cada parada del viaje</p>
+        </div>
+        <ol class="mt-8 space-y-5">
+          @for (day of tour()!.itinerary; track day.day) {
+            <li class="relative grid gap-4 md:grid-cols-[96px_minmax(0,1fr)]">
+              <div class="flex items-center gap-3 md:block">
+                <span
+                  class="grid size-14 shrink-0 place-items-center rounded-2xl bg-blue-950 text-white shadow-md shadow-blue-950/20 ring-2 ring-amber-300"
+                >
+                  <span class="block text-[9px] font-bold uppercase tracking-widest text-amber-300"
+                    >Día</span
+                  >
+                  <strong class="font-display text-xl leading-none">{{ day.day }}</strong>
+                </span>
+                @if (day.dateLabel) {
+                  <p class="text-xs font-semibold text-slate-500 md:mt-2">{{ day.dateLabel }}</p>
+                }
+                @if (!$last) {
+                  <span
+                    class="absolute left-7 top-16 hidden h-[calc(100%-2rem)] border-l-2 border-dashed border-amber-300/70 md:block"
+                    aria-hidden="true"
+                  ></span>
+                }
+              </div>
+              <article
+                class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:shadow-blue-950/5"
+              >
+                <h3 class="font-display text-lg font-bold text-blue-950">{{ day.title }}</h3>
+                <p class="mt-2 text-sm leading-7 text-slate-600">{{ day.description }}</p>
+                @if (day.highlights?.length) {
+                  <ul class="mt-4 flex flex-wrap gap-2">
+                    @for (highlight of day.highlights; track highlight) {
+                      <li
+                        class="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-800"
+                      >
+                        {{ highlight }}
+                      </li>
+                    }
+                  </ul>
+                }
+                @if (day.lodging) {
+                  <p
+                    class="mt-4 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800"
+                  >
+                    <span aria-hidden="true">🛏</span> Hospedaje: {{ day.lodging }}
+                  </p>
+                }
+              </article>
+            </li>
+          }
+        </ol>
+      </section>
+      <section class="grid gap-5 border-t border-slate-200 py-8 sm:grid-cols-2">
+        <div class="rounded-2xl bg-blue-50 p-5">
+          <h2 class="font-display text-xl font-bold text-blue-950">Qué incluye</h2>
+          <ul class="mt-4 space-y-3">
+            @for (item of tour()!.includes; track item) {
+              <li class="flex gap-2 text-sm leading-relaxed text-slate-700">
+                <span class="font-bold text-blue-600">✓</span>{{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+        <div class="rounded-2xl bg-slate-50 p-5">
+          <h2 class="font-display text-xl font-bold text-slate-900">No incluye</h2>
+          <ul class="mt-4 space-y-3">
+            @for (item of tour()!.excludes; track item) {
+              <li class="flex gap-2 text-sm leading-relaxed text-slate-600">
+                <span class="text-slate-400">×</span>{{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+      @if (tour()!.importantNotes?.length) {
+        <section class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h2 class="flex items-center gap-2 font-display text-lg font-bold text-blue-950">
+            <span
+              class="grid size-8 place-items-center rounded-full bg-blue-950 text-sm text-amber-300"
+              aria-hidden="true"
+              >!</span
+            >Antes de viajar
+          </h2>
+          <ul class="mt-4 space-y-2.5">
+            @for (note of tour()!.importantNotes; track note) {
+              <li class="flex gap-2 text-sm leading-relaxed text-slate-600">
+                <span class="mt-0.5 text-amber-500" aria-hidden="true">●</span>{{ note }}
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+    <aside class="min-w-0 lg:relative">
+      <div
+        class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-blue-950/5 sm:p-6 lg:sticky lg:top-25"
+      >
+        <p class="text-xs text-slate-500">Desde</p>
+        <div class="mt-1 flex items-end gap-2">
+          <strong class="font-display text-4xl text-blue-950">{{ price(tour()!.price) }}</strong
+          ><span class="pb-1 text-xs text-slate-500">/ persona</span>
+        </div>
+        <p class="mt-2 text-xs text-slate-400">
+          Precio por persona · Todo incluido según itinerario
+        </p>
+        <ul class="mt-4 space-y-2">
+          <li class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+            <span class="text-green-600" aria-hidden="true">✓</span>Itinerario fijo y confirmado
+          </li>
+          <li class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+            <span class="text-green-600" aria-hidden="true">✓</span>Hospedajes y visitas pactados
+            por convenio
+          </li>
+          <li class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+            <span class="text-green-600" aria-hidden="true">✓</span>Transporte, entradas y guías
+            incluidos
+          </li>
+        </ul>
+        <div class="my-5 h-px bg-slate-100"></div>
+        <h2 class="text-sm font-bold text-slate-900">Próximas salidas</h2>
+        @if (departures().length) {
+          <div class="mt-3 space-y-2">
+            @for (departure of departures().slice(0, 3); track departure.id) {
+              <div
+                class="flex items-center justify-between gap-2 rounded-xl border border-slate-100 p-3"
+              >
+                <div>
+                  <p class="text-sm font-semibold capitalize text-slate-800">
+                    {{ date(departure.date) }}
+                  </p>
+                  <p class="mt-0.5 text-[11px] text-blue-600">
+                    {{ departure.availableSlots }} cupos disponibles
+                  </p>
+                </div>
+                <app-status-badge status="available" />
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
+            Estamos preparando nuevas fechas. Consúltanos para una salida privada.
+          </p>
+        }
+        <app-button
+          label="Consultar disponibilidad"
+          size="lg"
+          [fullWidth]="true"
+          customClass="mt-5"
+          (btnClick)="consult()"
+        />
+        <p class="mt-3 text-center text-[11px] text-slate-400">
+          Sin cargos · Te respondemos en menos de 24 h
+        </p>
+      </div>
+    </aside>
+  </section>
+}

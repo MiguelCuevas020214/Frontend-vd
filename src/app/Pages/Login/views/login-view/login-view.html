@@ -1,0 +1,68 @@
+<app-auth-card
+  title="Bienvenido de vuelta"
+  subtitle="Ingresa al espacio de trabajo de ViajeDirecto."
+>
+  <form
+    class="space-y-5"
+    (submit)="$event.preventDefault()"
+    (ngSubmit)="submit()"
+    #loginForm="ngForm"
+  >
+    @if (error()) {
+      <div
+        class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-relaxed text-rose-700"
+        role="alert"
+      >
+        {{ error() }}
+      </div>
+    }
+    <app-input-field
+      inputId="login-email"
+      label="Correo electrónico"
+      type="email"
+      placeholder="nombre@viajedirecto.com"
+      autocomplete="email"
+      [required]="true"
+      [ngModel]="credentials.email"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="setEmail($event)"
+    />
+    <app-password-input
+      inputId="login-password"
+      [ngModel]="credentials.password"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="credentials.password = $event"
+    />
+    <div class="flex items-center justify-between gap-3 text-xs">
+      <label class="flex cursor-pointer items-center gap-2 text-slate-600"
+        ><input type="checkbox" class="size-4 accent-blue-800" />Recordarme</label
+      ><span class="text-slate-400">Acceso solo para el equipo</span>
+    </div>
+    <app-auth-button [loading]="loading()" label="Ingresar al panel" />
+  </form>
+  <div class="mt-7 border-t border-slate-100 pt-5">
+    <p class="text-center text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+      Explorar la demostración
+    </p>
+    <div class="mt-3 grid grid-cols-2 gap-2">
+      <button
+        type="button"
+        class="cursor-pointer rounded-xl border border-slate-200 px-3 py-2.5 text-left transition hover:border-blue-400 hover:bg-blue-50"
+        (click)="useDemo('owner')"
+      >
+        <span class="block text-xs font-bold text-slate-800">Cuenta dueño</span
+        ><span class="mt-0.5 block text-[10px] text-slate-500">Autocompletar acceso</span></button
+      ><button
+        type="button"
+        class="cursor-pointer rounded-xl border border-slate-200 px-3 py-2.5 text-left transition hover:border-blue-400 hover:bg-blue-50"
+        (click)="useDemo('editor')"
+      >
+        <span class="block text-xs font-bold text-slate-800">Cuenta editor</span
+        ><span class="mt-0.5 block text-[10px] text-slate-500">Autocompletar acceso</span>
+      </button>
+    </div>
+    <p class="mt-3 text-center text-[10px] leading-relaxed text-slate-400">
+      Los cambios de la demo se guardan solo en este navegador.
+    </p>
+  </div>
+</app-auth-card>

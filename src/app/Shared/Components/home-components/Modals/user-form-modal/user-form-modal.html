@@ -1,0 +1,83 @@
+<app-modal
+  [title]="user ? 'Editar usuario' : 'Invitar a un nuevo integrante'"
+  subtitle="Define sus datos, rol y acceso al panel."
+  maxWidth="max-w-lg"
+  [closeOnBackdrop]="false"
+  (onClose)="cancelled.emit()"
+>
+  <form class="space-y-4" (submit)="$event.preventDefault()" (ngSubmit)="save()">
+    @if (error()) {
+      <div
+        class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
+        role="alert"
+      >
+        {{ error() }}
+      </div>
+    }
+    <app-input-field
+      label="Nombre completo"
+      placeholder="Nombre y apellidos"
+      [required]="true"
+      [ngModel]="form.name"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="form.name = $event === null ? '' : $event.toString()"
+    /><app-input-field
+      label="Correo electrónico"
+      type="email"
+      placeholder="nombre@viajedirecto.com"
+      autocomplete="off"
+      [required]="true"
+      [ngModel]="form.email"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="form.email = $event === null ? '' : $event.toString()"
+    /><app-password-input
+      inputId="user-password"
+      [label]="user ? 'Nueva contraseña (opcional)' : 'Contraseña temporal'"
+      placeholder="Mínimo 8 caracteres"
+      autocomplete="new-password"
+      [ngModel]="form.password"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="form.password = $event"
+    />
+    <div class="grid grid-cols-2 gap-4">
+      <app-select
+        label="Rol"
+        [options]="[
+          { label: 'Editor', value: 'editor' },
+          { label: 'Dueño', value: 'owner' },
+        ]"
+        [ngModel]="form.role"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setRole($event)"
+      /><app-select
+        label="Estado"
+        [options]="[
+          { label: 'Activo', value: 'active' },
+          { label: 'Inactivo', value: 'inactive' },
+        ]"
+        [ngModel]="form.active ? 'active' : 'inactive'"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="setActive($event)"
+      />
+    </div>
+    <div class="rounded-xl bg-sky-50 p-3 text-xs leading-relaxed text-sky-800">
+      <strong>Editor:</strong> gestiona tours, paquetes, salidas y contenido.<br /><strong
+        >Dueño:</strong
+      >
+      además puede administrar usuarios y permisos.
+    </div>
+    <footer
+      class="sticky bottom-0 -mx-5 flex justify-end gap-3 border-t border-slate-100 bg-white px-5 pt-4 sm:-mx-6 sm:px-6"
+    >
+      <app-button
+        variant="outline"
+        label="Cancelar"
+        [disabled]="saving()"
+        (btnClick)="cancelled.emit()"
+      /><app-save-button
+        [loading]="saving()"
+        [label]="user ? 'Guardar cambios' : 'Crear usuario'"
+      />
+    </footer>
+  </form>
+</app-modal>

@@ -1,0 +1,22 @@
+<label class="relative block w-full">
+  <span class="sr-only">{{ label }}</span>
+  <svg
+    class="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </svg>
+  <input
+    type="search"
+    [ngModel]="ngModel"
+    [ngModelOptions]="{ standalone: true }"
+    (ngModelChange)="update($event)"
+    [placeholder]="placeholder"
+    class="min-h-11 w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+  />
+</label>

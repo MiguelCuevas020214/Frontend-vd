@@ -1,0 +1,39 @@
+<div class="w-full">
+  @if (label) {
+    <label [for]="selectId" class="mb-1.5 block text-sm font-semibold text-slate-700"
+      >{{ label }}
+      @if (required) {
+        <span class="text-rose-500">*</span>
+      }
+    </label>
+  }
+  <div class="relative">
+    <select
+      [id]="selectId"
+      [disabled]="disabled"
+      [required]="required"
+      [ngModel]="ngModel === null ? '' : String(ngModel)"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="update($event)"
+      class="min-h-11 w-full cursor-pointer appearance-none rounded-xl border bg-white px-3.5 py-2.5 pr-10 text-sm text-slate-800 outline-none transition disabled:cursor-not-allowed disabled:bg-slate-100"
+      [class]="
+        error
+          ? 'border-rose-400 bg-rose-50 ring-2 ring-rose-200'
+          : 'border-slate-200 hover:border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100'
+      "
+    >
+      <option value="" disabled>{{ placeholder }}</option>
+      @for (option of normalizedOptions; track $index) {
+        <option [value]="String(option.value)">{{ option.label }}</option>
+      }
+    </select>
+    <span
+      class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+      aria-hidden="true"
+      >⌄</span
+    >
+  </div>
+  @if (error) {
+    <p class="mt-1.5 text-xs font-medium text-rose-600" role="alert">{{ error }}</p>
+  }
+</div>

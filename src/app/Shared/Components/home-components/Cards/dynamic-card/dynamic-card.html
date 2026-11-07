@@ -1,0 +1,61 @@
+<a
+  [routerLink]="link"
+  (click)="cardClick.emit()"
+  class="group flex h-full min-w-0 cursor-pointer flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10"
+>
+  <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
+    <img
+      [src]="image"
+      [alt]="imageAlt || title"
+      class="size-full object-cover transition duration-700 group-hover:scale-105"
+      loading="lazy"
+    />
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-transparent"
+    ></div>
+    @if (badges.length) {
+      <div class="absolute left-3 top-3 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-2">
+        @for (badge of badges; track badge) {
+          <app-status-badge status="featured" [label]="badge" />
+        }
+      </div>
+    }
+    @if (meta) {
+      <span
+        class="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur"
+        >{{ meta }}</span
+      >
+    }
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    @if (subtitle) {
+      <p
+        class="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-blue-700"
+      >
+        <span aria-hidden="true">⌖</span>{{ subtitle }}
+      </p>
+    }
+    <h3
+      class="font-display text-xl font-bold leading-snug text-slate-950 transition group-hover:text-blue-800"
+    >
+      {{ title }}
+    </h3>
+    @if (description) {
+      <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{{ description }}</p>
+    }
+    <div class="mt-auto flex items-end justify-between gap-3 pt-5">
+      <div>
+        @if (price) {
+          <span class="block text-[11px] text-slate-500">{{ priceLabel }}</span
+          ><strong class="text-lg text-slate-950">{{ price }}</strong>
+        }
+      </div>
+      <span
+        class="grid size-9 shrink-0 place-items-center rounded-full bg-amber-300 text-lg text-blue-950 transition group-hover:rotate-[-35deg]"
+        aria-hidden="true"
+        >→</span
+      >
+    </div>
+    <span class="sr-only">{{ ctaLabel }}</span>
+  </div>
+</a>

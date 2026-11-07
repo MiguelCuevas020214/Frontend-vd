@@ -1,0 +1,41 @@
+<div class="relative" (appClickOutside)="isOpen = false">
+  <button
+    type="button"
+    class="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-blue-600"
+    (click)="isOpen = !isOpen"
+    [attr.aria-expanded]="isOpen"
+  >
+    <span aria-hidden="true">☷</span> Filtros
+    @if (activeCount) {
+      <span
+        class="grid size-5 place-items-center rounded-full bg-blue-900 text-[10px] text-white"
+        >{{ activeCount }}</span
+      >
+    }
+  </button>
+  @if (isOpen) {
+    <section
+      class="fixed left-4 right-4 top-28 z-50 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl shadow-slate-950/15 sm:absolute sm:left-auto sm:right-0 sm:top-13 sm:w-84"
+      [attr.aria-label]="title"
+    >
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold text-slate-900">{{ title }}</h3>
+        <button
+          type="button"
+          class="cursor-pointer text-xs font-semibold text-blue-800"
+          (click)="clear.emit()"
+        >
+          Limpiar
+        </button>
+      </div>
+      <ng-content />
+      <button
+        type="button"
+        class="mt-5 min-h-10 w-full cursor-pointer rounded-full bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+        (click)="applyFilters()"
+      >
+        Ver resultados
+      </button>
+    </section>
+  }
+</div>
